@@ -79,7 +79,7 @@ def confusion_matrix_prob(cm_counts):
     return cm_prob
 
 # ---------------- 1) Loss curves (train/test) ----------------
-hist_path = os.path.join(CKPT_DIR, 'loss_history.json')
+hist_path = os.path.join(CKPT_DIR, 'nn_loss_history.json')
 if not os.path.exists(hist_path):
     raise FileNotFoundError(f"Missing {hist_path}. Re-run training so it saves loss history.")
 with open(hist_path, 'r') as f:

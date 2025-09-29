@@ -154,7 +154,7 @@ def train(model, dataloader):
         test_losses.append(float(test_loss))
         print(f"Epoch [{epoch+1}/{epochs}] completed. Train Loss: {avg_loss:.4f} | Test Loss: {test_loss:.4f} | Test Acc: {test_acc:.4f}")
 
-    with open(os.path.join(out_dir, "loss_history.json"), "w") as f:
+    with open(os.path.join(out_dir, "nn_loss_history.json"), "w") as f:
         json.dump({"train_losses": train_losses, "test_losses": test_losses}, f, indent=2)
 
 if __name__ == "__main__":

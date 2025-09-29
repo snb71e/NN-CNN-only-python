@@ -7,13 +7,13 @@ This repository contains the implementation of a 3-layer Neural Network (NN) for
 <p align="center">
     <img src="assets/confusion_matrix_prob.png" alt="Confusion Matrix" width="400"/>
     <br>
-    <em>Confusion Matrix of Model Predictions</em>
+    <em>NN Confusion Matrix of Model Predictions</em>
 </p>
 
 <p align="center">
     <img src="assets/loss_curves.png" alt="Loss Curves" width="400"/>
     <br>
-    <em>Training and Validation Loss Curves</em>
+    <em>NN Training and Validation Loss Curves</em>
 </p>
 
 

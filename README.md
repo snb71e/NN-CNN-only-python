@@ -44,3 +44,10 @@ The training pipeline was implemented following the standard deep learning loop:
 6. Parameter Update: Update the model parameters using the implemented Stochastic Gradient Descent (SGD) optimizer.
 
 
+```bash
+# run# This script runs the training and testing of the neural network model.
+python train_NN.py
+
+# Then, it tests the trained model.
+python test_NN.py  
+```

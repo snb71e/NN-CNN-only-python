@@ -8,12 +8,12 @@ import os
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-from dataloader import Dataloader
+from src.dataloader import Dataloader
 from train_NN import ThreeLayerNN
 
 # ---------------- Paths ----------------
 CKPT_DIR = "checkpoints"             # where loss_history.json is saved by train_NN.py
-OUT_DIR  = "outputs"         # where figures will be saved
+OUT_DIR  = "outputs_NN"         # where figures will be saved
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # ---------------- Load model ----------------

@@ -1,6 +1,22 @@
 # 3-layer Neural Network for Classification (From Scratch)
 This repository contains the implementation of a 3-layer Neural Network (NN) for classification, built entirely from scratch using only Python and standard scientific computing libraries like Numpy. 
 
+
+## Demo Images
+
+<p align="center">
+    <img src="assets/confusion_matrix_prob.png" alt="Confusion Matrix" width="400"/>
+    <br>
+    <em>Confusion Matrix of Model Predictions</em>
+</p>
+
+<p align="center">
+    <img src="assets/loss_curves.png" alt="Loss Curves" width="400"/>
+    <br>
+    <em>Training and Validation Loss Curves</em>
+</p>
+
+
 ## 🎯 Project Objective
 The primary goal of this part of the assignment was to build and train a functional 3-layer Neural Network capable of classifying handwritten digits from the MNIST dataset. This implementation focuses on developing a deep understanding of the fundamental building blocks and the training pipeline without relying on external deep learning frameworks.
 

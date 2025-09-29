@@ -52,7 +52,7 @@ def evaluate_loss_and_acc(model, dataload):
     acc = correct / total
     return avg_loss, acc
 
-def save_model(model, save_path='outputs_NN/nn.npz'):
+def save_model(model, save_path='checkpoints/nn.npz'):
     params = {}
 
     for i, param in enumerate(model.params):
@@ -122,4 +122,4 @@ if __name__ == "__main__":
     model = ThreeLayerNN(input_size, hidden_size1, hidden_size2, output_size)
 
     train(model, dataloader='dataset')
-    save_model(model, save_path='outputs_NN/nn.npz')
+    save_model(model, save_path='checkpoints/nn.npz')

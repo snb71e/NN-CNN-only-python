@@ -82,10 +82,10 @@ def save_model(model, save_path='nn.npz'):
     hidden_size1 = model.layers['L1'].W.shape[1]
     hidden_size2 = model.layers['L2'].W.shape[1]
     output_size = model.layers['L3'].W.shape[1]
-    params['arch_input_size'] = np.array(input_size)
-    params['arch_hidden_size1'] = np.array(hidden_size1)
-    params['arch_hidden_size2'] = np.array(hidden_size2)
-    params['arch_output_size'] = np.array(output_size)
+    params['input_size'] = np.array(input_size)
+    params['hidden_size1'] = np.array(hidden_size1)
+    params['hidden_size2'] = np.array(hidden_size2)
+    params['output_size'] = np.array(output_size)
 
     np.savez(save_path, **params)
     print(f"Model parameters saved to {save_path}")

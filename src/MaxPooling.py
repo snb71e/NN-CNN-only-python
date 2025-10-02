@@ -1,70 +1,58 @@
 import numpy as np
 
 class MaxPooling:
-    def __init__(self, pool_h, pool_w, stride=1, padding=0):
-        self.pool_h = pool_h
-        self.pool_w = pool_w
+    def __init__(self, pool_size=2, stride=2):
+        self.pool_size = pool_size
         self.stride = stride
-        self.padding = padding
 
-        self.arg_max = None
-
+        self.cache = None
+    
     def forward(self, x):
         N, C, H, W = x.shape
-        PH, PW = self.pool_h, self.pool_w
-        S = self.stride
+        pool_h, pool_w, stride = self.pool_size, self.pool_size, self.stride
 
-        out_h = (H - PH) // S + 1
-        out_w = (W - PW) // S + 1
+        H_out = (H - pool_h) // stride + 1
+        W_out = (W - pool_w) // stride + 1
 
-        out = np.zeros((N, C, out_h, out_w))
-        self.arg_max = np.zeros((N, C, out_h, out_w), dtype=np.int)
+        out = np.zeros((N, C, H_out, W_out))
+        self.max_index = np.zeros_like(x, dtype=bool)
 
         for n in range(N):
             for c in range(C):
-                for i in range(out_h):
-                    for j in range(out_w):
-                        h_start = i * S
-                        h_end = h_start + PH
-                        w_start = j * S
-                        w_end = w_start + PW
+                for h_out in range(H_out):
+                    for w_out in range(W_out):
+                        h_start = h_out * stride
+                        h_end = h_start + pool_h
+                        w_start = w_out * stride
+                        w_end = w_start + pool_w
 
                         window = x[n, c, h_start:h_end, w_start:w_end]
+                        max_val = np.max(window)
+                        out[n, c, h_out, w_out] = max_val
 
-                        out[n, c, i, j] = np.max(window)
-
-                        self.arg_max[n, c, i, j] = np.argmax(window)
+                        max_mask = (window == max_val)
+                        self.max_index[n, c, h_start:h_end, w_start:w_end] += max_mask
+        self.cache = x
         return out
     
     def backward(self, upstream_grad):
-        N, C, out_h, out_w = upstream_grad.shape
-        PH, PW = self.pool_h, self.pool_w
-        S = self.stride
-        
-        H_in = (out_h - 1) * S + PH
-        W_in = (out_w - 1) * S + PW
+        x = self.cache
+        N, C, H, W = x.shape
+        dx = np.zeros((N, C, H, W))
 
-        downstream_grad = np.zeros((N, C, H_in, W_in))
-        
+        pool_h, pool_w, stride = self.pool_size, self.pool_size, self.stride
+        H_out = upstream_grad.shape[2]
+        W_out = upstream_grad.shape[3]
 
         for n in range(N):
             for c in range(C):
-                for i in range(out_h):
-                    for j in range(out_w):
-                        h_start = out_h * S
-                        h_end = h_start + PH
-                        w_start = out_w * S
-                        w_end = w_start + PW
+                for h_out in range(H_out):
+                    for w_out in range(W_out):
+                        h_start = h_out * stride
+                        h_end = h_start + pool_h
+                        w_start = w_out * stride
+                        w_end = w_start + pool_w
 
-                        arg_max_idx = self.arg_max[n, c, out_h, out_w]
-
-                        grad_value = upstream_grad[n, c, out_h, out_w]
-                        
-                        mask = np.zeros(PH * PW)
-                        mask[arg_max_idx] = grad_value
-                        
-                        mask = mask.reshape(PH, PW)
-                        
-                        downstream_grad[n, c, h_start:h_end, w_start:w_end] += mask
-
-        return downstream_grad
+                        mask = self.max_index[n, c, h_start:h_end, w_start:w_end]
+                        dx[n, c, h_start:h_end, w_start:w_end] += upstream_grad[n, c, h_out, w_out] * mask                        
+        return dx

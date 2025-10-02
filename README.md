@@ -22,6 +22,7 @@ This implementation focuses on developing a deep understanding of the fundamenta
 The network is a 3-layer structure designed to classify 28×28 input images into 10 output classes (digits 0-9).
 
 The sequence of the layers is:
+
 Input → Linear → ReLU → Linear → ReLU → Linear → SoftMax
 
 

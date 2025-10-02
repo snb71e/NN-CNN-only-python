@@ -52,12 +52,14 @@ class ConvLayer:
         return out
     
     def backward(self, upstream_grad):
-        x, W, x_padded = self.cache
+
+        
+        x, x_padded = self.cache
         N, C, H, W = x.shape
         FN, C, FH, FW = self.W.shape
         S, P = self.S, self.P
 
-        self.dw = np.zeros_like(W)
+        self.dW = np.zeros_like(self.W)
         self.db = np.zeros_like(self.b)
 
         dx_padded = np.zeros_like(x_padded)
@@ -78,11 +80,10 @@ class ConvLayer:
 
                         grad_value = upstream_grad[n, fn, oh, ow]
 
-                        self.dw[fn] += window * grad_value
-                        dx_padded[n, :, h_start:h_end, w_start:w_end] += W[fn] * grad_value
+                        self.dW[fn] += window * grad_value
+                        dx_padded[n, :, h_start:h_end, w_start:w_end] += self.W[fn] * grad_value
         if P == 0:
             downstream_grad = dx_padded
         else:
             downstream_grad = dx_padded[:, :, P:H+P, P:W+P]
         return downstream_grad
-    

@@ -1,6 +1,5 @@
 # 3-layer Neural Network for Classification (From Scratch)
-This repository contains the implementation of a 3-layer Neural Network (NN) for classification, built entirely from scratch using only Python and standard scientific computing libraries like Numpy. 
-
+This repository contains the implementation of a 3-layer Neural Network (NN) for classification, built entirely from scratch using only Python and standard scientific computing libraries like Numpy. (Also, There are Pytorch implementation.)
 
 
 <p align="center">

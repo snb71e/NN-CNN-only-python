@@ -1,4 +1,5 @@
 import numpy as np
+from src.matrix import im2col, col2im
 
 class MaxPooling:
     def __init__(self, pool_size=2, stride=2):
@@ -9,50 +10,31 @@ class MaxPooling:
     
     def forward(self, x):
         N, C, H, W = x.shape
-        pool_h, pool_w, stride = self.pool_size, self.pool_size, self.stride
+        kH = kW = self.pool_size
+        s = self.stride
 
-        H_out = (H - pool_h) // stride + 1
-        W_out = (W - pool_w) // stride + 1
+        cols, H_out, W_out = im2col(x, kH, kW, stride=s, pad=0)
+        cols = cols.reshape(C, kH*kW, N*H_out*W_out) 
 
-        out = np.zeros((N, C, H_out, W_out))
-        self.max_index = np.zeros_like(x, dtype=bool)
+        max_idx = np.argmax(cols, axis=1) 
+        out_vals = np.max(cols, axis=1) 
 
-        for n in range(N):
-            for c in range(C):
-                for h_out in range(H_out):
-                    for w_out in range(W_out):
-                        h_start = h_out * stride
-                        h_end = h_start + pool_h
-                        w_start = w_out * stride
-                        w_end = w_start + pool_w
+        out = out_vals.reshape(C, N, H_out, W_out).transpose(1, 0, 2, 3)
 
-                        window = x[n, c, h_start:h_end, w_start:w_end]
-                        max_val = np.max(window)
-                        out[n, c, h_out, w_out] = max_val
-
-                        max_mask = (window == max_val)
-                        self.max_index[n, c, h_start:h_end, w_start:w_end] += max_mask
-        self.cache = x
+        self.cache = (x.shape, H_out, W_out, max_idx)
         return out
     
     def backward(self, upstream_grad):
-        x = self.cache
-        N, C, H, W = x.shape
-        dx = np.zeros((N, C, H, W))
+        x_shape, H_out, W_out, max_idx = self.cache
+        N, C, H, W = x_shape
+        kH = kW = self.pool_size
+        s = self.stride
 
-        pool_h, pool_w, stride = self.pool_size, self.pool_size, self.stride
-        H_out = upstream_grad.shape[2]
-        W_out = upstream_grad.shape[3]
+        dcols = np.zeros((C, kH*kW, N*H_out*W_out), dtype=upstream_grad.dtype)
+        dout_flat = upstream_grad.transpose(1, 0, 2, 3).reshape(C, N*H_out*W_out)
+        for c in range(C):
+            dcols[c, max_idx[c], np.arange(N*H_out*W_out)] = dout_flat[c]
+        dcols = dcols.reshape(C*kH*kW, N*H_out*W_out)
 
-        for n in range(N):
-            for c in range(C):
-                for h_out in range(H_out):
-                    for w_out in range(W_out):
-                        h_start = h_out * stride
-                        h_end = h_start + pool_h
-                        w_start = w_out * stride
-                        w_end = w_start + pool_w
-
-                        mask = self.max_index[n, c, h_start:h_end, w_start:w_end]
-                        dx[n, c, h_start:h_end, w_start:w_end] += upstream_grad[n, c, h_out, w_out] * mask                        
+        dx = col2im(dcols, x_shape, kH, kW, stride=s, pad=0)
         return dx

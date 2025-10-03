@@ -6,7 +6,6 @@ import json
 
 from model.ThreeLayerCNN import ThreeLayerCNN
 
-
 def evaluate_loss_and_acc(model, dataload):
     total = 0
     total_loss = 0.0
@@ -55,7 +54,7 @@ def save_model(model, save_path='checkpoints/cnn.npz'):
 def train(model, dataloader):
     batch_size = 128
     learning_rate = 0.01
-    epochs = 10 
+    epochs = 100
     
     dataload = Dataloader(dataloader, is_train=True, shuffle=True, batch_size=batch_size)
     optimizer = SGD(learning_rate=learning_rate)

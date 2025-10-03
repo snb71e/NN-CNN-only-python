@@ -33,7 +33,7 @@ The network is a 3-layer structure designed to classify 28×28 input images into
 
 The sequence of the layers is:
 
-Input → Linear → ReLU → Linear → ReLU → Linear → SoftMax
+- Input → Linear → ReLU → Linear → ReLU → Linear → SoftMax
 
 
 ### Implemented Sub-Modules (with Backpropagation)

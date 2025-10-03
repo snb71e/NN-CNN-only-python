@@ -12,6 +12,15 @@ Also, There are Pytorch implementation.
   <em>scratch NN Confusion Matrix of Model Predictions (left), Training and Validation Loss Curves (right)</em>
 </p>
 
+<p align="center">
+  <img src="assets/cnn_confusion_matrix_prob.png" alt="Confusion Matrix" width="45%"/>
+  <img src="assets/cnn_loss_curves.png" alt="Loss Curves" width="45%"/>
+</p>
+
+<p align="center">
+  <em>scratch CNN Confusion Matrix of Model Predictions (left), Training and Validation Loss Curves (right)</em>
+</p>
+
 
 ## Project Objective
 The primary goal of this part of the assignment was to build and train a functional 3-layer Neural Network capable of classifying handwritten digits from the MNIST dataset. 

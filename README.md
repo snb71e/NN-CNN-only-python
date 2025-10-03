@@ -2,7 +2,7 @@
 This repository contains the implementation of a 3-layer Neural Network (NN) and Convolutional Neural Network (CNN) for classification, built entirely from scratch using **only Python and standard libraries like Numpy**. 
 Also, There are Pytorch implementation.
 
-
+### Neural Network
 <p align="center">
   <img src="assets/confusion_matrix_prob.png" alt="Confusion Matrix" width="45%"/>
   <img src="assets/loss_curves.png" alt="Loss Curves" width="45%"/>
@@ -12,6 +12,7 @@ Also, There are Pytorch implementation.
   <em>scratch NN Confusion Matrix of Model Predictions (left), Training and Validation Loss Curves (right)</em>
 </p>
 
+### Convolutional Neural Network
 <p align="center">
   <img src="assets/cnn_confusion_matrix_prob.png" alt="Confusion Matrix" width="45%"/>
   <img src="assets/cnn_loss_curves.png" alt="Loss Curves" width="45%"/>

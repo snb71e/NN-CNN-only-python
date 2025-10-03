@@ -1,5 +1,6 @@
 __pycache__
 checkpoints
 outputs_NN
+outputs_CNN
 outputs_torch_NN
 outputs_torch_CNN

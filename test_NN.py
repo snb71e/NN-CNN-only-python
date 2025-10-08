@@ -1,31 +1,22 @@
-"""
-Draw all the output of NN, then write them in a report
-    1. Show training Loss graph (Train & test set)
-    2. Show 10x10 confusion matrix (the probability matrix of classification)
-    3. Show top 3 scored images with probability (for each class)
-"""
 import os
 import json
 import numpy as np
 import matplotlib.pyplot as plt
 from src.dataloader import Dataloader
-from train_NN import ThreeLayerNN
 from src.utils import load_model, confusion_matrix, confusion_matrix_prob
 
-# ---------------- Paths ----------------
-CKPT_DIR = "checkpoints"             # where loss_history.json is saved by train_NN.py
-OUT_DIR  = "outputs_NN"         # where figures will be saved
+CKPT_DIR = "checkpoints" 
+OUT_DIR  = "epoch_5_outputs_NN"
 os.makedirs(OUT_DIR, exist_ok=True)
 
+model = load_model('./checkpoints/epoch_5_nn.npz')
+hist_path = os.path.join(CKPT_DIR, 'epoch_5_nn_loss_history.json')
 
-model = load_model('./checkpoints/nn.npz')
 
-# ---------------- Data loaders ----------------
 batch_size = 128
 train_loader = Dataloader("dataset", is_train=True,  shuffle=False, batch_size=batch_size)
 test_loader  = Dataloader("dataset", is_train=False, shuffle=False, batch_size=batch_size)
 
-# ---------------- Utility functions ----------------
 def evaluate_full(model, dataload):
     total = 0
     total_loss = 0.0
@@ -53,7 +44,6 @@ def evaluate_full(model, dataload):
     return avg_loss, acc, y_true, y_pred, probs_all
 
 # ---------------- 1) Loss curves (train/test) ----------------
-hist_path = os.path.join(CKPT_DIR, 'nn_loss_history.json')
 if not os.path.exists(hist_path):
     raise FileNotFoundError(f"Missing {hist_path}. Re-run training so it saves loss history.")
 with open(hist_path, 'r') as f:

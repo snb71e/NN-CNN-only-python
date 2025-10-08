@@ -1,23 +1,20 @@
 """
 ReLU(x) = max(0, x)
 """
+import numpy as np
 
 class ReLU:
     def __init__(self):
-
-        self.cache = None
+        self.mask = None
     
     def forward(self, x):
-
-        self.cache = (x <= 0)
-        out = x.copy()
-        out[self.cache] = 0
+        self.mask = (x <= 0)
+        out = np.maximum(0, x)
 
         return out
     
-    def backward(self, upstream_grad):
+    def backward(self, grad_output):
+        grad_input = grad_output.copy()
+        grad_input[self.mask] = 0
 
-        downstream_grad = upstream_grad.copy()
-        downstream_grad[self.cache] = 0
-
-        return downstream_grad
+        return grad_input

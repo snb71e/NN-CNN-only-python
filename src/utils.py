@@ -24,6 +24,32 @@ def evaluate_loss_and_acc(model, dataload):
     acc = correct / total
     return avg_loss, acc
 
+
+def evaluate_loss_and_acc_cnn(model, dataload):
+    total = 0
+    total_loss = 0.0
+    correct = 0
+    
+    for images, labels in dataload:
+        N = images.shape[0]
+        x = images 
+        t = labels
+        
+        loss = model.forward(x, t)
+        total_loss += float(loss) * N
+        
+        probs = model.forward(x, t=None)
+        preds = np.argmax(probs, axis=1)
+        
+        t_ids = np.argmax(t, axis=1) if t.ndim == 2 else t
+        
+        correct += int((preds == t_ids).sum())
+        total += N
+        
+    avg_loss = total_loss / total
+    acc = correct / total
+    return avg_loss, acc
+
 def save_model(model, save_path='checkpoints/nn.npz'):
     params = {}
 

@@ -2,6 +2,67 @@ import numpy as np
 from model.ThreeLayerNN import ThreeLayerNN
 from model.ThreeLayerCNN import ThreeLayerCNN
 
+def evaluate_loss_and_acc(model, dataload):
+    total = 0
+    total_loss = 0.0
+    correct = 0
+    for images, labels in dataload:
+        N = images.shape[0]
+        x = images.reshape(N, -1)
+        t = labels
+        
+        loss = model.forward(x, t)
+        total_loss += float(loss) * N
+        
+        probs = model.forward(x, t=None)
+        preds = np.argmax(probs, axis=1)
+        
+        t_ids = np.argmax(t, axis=1) if t.ndim == 2 else t
+        correct += int((preds == t_ids).sum())
+        total += N
+    avg_loss = total_loss / total
+    acc = correct / total
+    return avg_loss, acc
+
+def save_model(model, save_path='checkpoints/nn.npz'):
+    params = {}
+
+    for i, param in enumerate(model.params):
+        params[f'param_{i}'] = param
+
+    input_size  = model.layers['L1'].W.shape[0]
+    hidden_size1 = model.layers['L1'].W.shape[1]
+    hidden_size2 = model.layers['L2'].W.shape[1]
+    output_size = model.layers['L3'].W.shape[1]
+    params['input_size'] = np.array(input_size)
+    params['hidden_size1'] = np.array(hidden_size1)
+    params['hidden_size2'] = np.array(hidden_size2)
+    params['output_size'] = np.array(output_size)
+
+    np.savez(save_path, **params)
+    print(f"Model parameters saved to {save_path}")
+
+
+def save_model_cnn(model, save_path='checkpoints/cnn.npz'):
+    params = {}
+    
+    params['W1'] = model.conv1.W
+    params['b1'] = model.conv1.b
+    params['W2'] = model.conv2.W
+    params['b2'] = model.conv2.b
+    
+    params['W3'] = model.linear.W
+    params['b3'] = model.linear.b
+    
+    params['input_dim'] = np.array(model.conv1.W.shape[1:])
+    params['output_size'] = np.array(model.linear.W.shape[1])
+    
+
+    np.savez(save_path, **params)
+    print(f"Model parameters saved to {save_path}")
+
+
+
 def load_model(load_path='checkpoints/nn.npz'):
     loaded = np.load(load_path)
     if all(k in loaded for k in ('input_size','hidden_size1','hidden_size2','output_size')):

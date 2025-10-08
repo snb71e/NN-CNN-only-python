@@ -10,18 +10,18 @@ class LinearLayer:
 
         self.dW = None
         self.db = None
-        self.cache = None
+        self.x = None
 
-    def forward(self, X):
-        self.cache = X
-        output = X @ self.W + self.b
+    def forward(self, x):
+        self.x = x
+        output = x @ self.W + self.b
         return output
 
-    def backward(self, upstream_grad):
-        x = self.cache
-        self.dW = x.T @ upstream_grad
-        self.db = np.sum(upstream_grad, axis=0, keepdims=True)
+    def backward(self, grad_output):
+        x = self.x
+        self.dW = x.T @ grad_output
+        self.db = np.sum(grad_output, axis=0, keepdims=True)
 
-        downstream_grad = upstream_grad @ self.W.T
+        grad_input = grad_output @ self.W.T
 
-        return downstream_grad
+        return grad_input

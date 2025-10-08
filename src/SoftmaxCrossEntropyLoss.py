@@ -25,5 +25,5 @@ class SoftmaxCrossEntropyLoss():
     
     def backward(self):
         N = self.y.shape[0]
-        downstream_grad = (self.y - self.t) / N
-        return downstream_grad
+        grad_input = (self.y - self.t) / N
+        return grad_input

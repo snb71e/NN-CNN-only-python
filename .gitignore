@@ -4,3 +4,8 @@ outputs_NN
 outputs_CNN
 outputs_torch_NN
 outputs_torch_CNN
+epoch_5_outputs_CNN
+epoch_5_outputs_NN
+epoch_500_outputs_NN
+epoch_5_outputs_torch_CNN
+epoch_5_outputs_torch_NN

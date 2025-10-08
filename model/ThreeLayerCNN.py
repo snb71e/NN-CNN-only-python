@@ -15,8 +15,14 @@ class ThreeLayerCNN:
         
         C_in, H_in, W_in = input_dim
 
-        self.conv1 = ConvLayer(C_in, conv1_params['filter_num'], conv1_params['filter_size'], 
-                               conv1_params['filter_size'], conv1_params['stride'], conv1_params['padding'])
+        self.conv1 = ConvLayer(
+            C_in, 
+            conv1_params['filter_num'], 
+            conv1_params['filter_size'], 
+            conv1_params['filter_size'], 
+            conv1_params['stride'], 
+            conv1_params['padding']
+        )
         self.relu1 = ReLU()
         
         H_c1 = 28
@@ -25,8 +31,14 @@ class ThreeLayerCNN:
         H_p1 = H_c1 // pool1_params['stride'] # 28 / 2 = 14
         W_p1 = W_c1 // pool1_params['stride'] # 28 / 2 = 14
 
-        self.conv2 = ConvLayer(conv1_params['filter_num'], conv2_params['filter_num'], conv2_params['filter_size'], 
-                               conv2_params['filter_size'], conv2_params['stride'], conv2_params['padding'])
+        self.conv2 = ConvLayer(
+            conv1_params['filter_num'], 
+            conv2_params['filter_num'], 
+            conv2_params['filter_size'], 
+            conv2_params['filter_size'], 
+            conv2_params['stride'], 
+            conv2_params['padding']
+        )
         self.relu2 = ReLU()
         
         H_c2 = 14 
@@ -80,7 +92,7 @@ class ThreeLayerCNN:
         dout = self.linear.backward(dout) 
         
         N, _ = dout.shape
-        dout = dout.reshape(N, self.conv2.FN, self.H_p2, self.W_p2)
+        dout = dout.reshape(N, self.conv2.C_out, self.H_p2, self.W_p2)
 
         reversed_layers = self.layers[:-1]
         reversed_layers.reverse()

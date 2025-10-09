@@ -12,7 +12,7 @@ def np_batch_to_tensors(images, labels, device):
     else:
         x = images.float() if isinstance(images, torch.Tensor) else images
     if hasattr(x, 'ndim') and x.ndim == 3:
-        x = x.unsqueeze(1) # (N, 28, 28) -> (N, 1, 28, 28)
+        x = x.unsqueeze(1) # (N, 1, 28, 28)
 
     if isinstance(labels, np.ndarray):
         y_np = labels.argmax(axis=1) if labels.ndim == 2 else labels 
@@ -44,9 +44,10 @@ def save_model(model, save_path='checkpoints/torch_cnn.pt'):
     print(f"Model parameters saved to {save_path}")
 
 def train(model, dataloader, device):
+    # Hyperparameters
     batch_size = 128
     learning_rate = 0.01
-    epochs = 100
+    epochs = 5
     
     dataload = Dataloader(dataloader, is_train=True, shuffle=True, batch_size=batch_size)
     testload = Dataloader(dataloader, is_train=False, shuffle=False, batch_size=batch_size)
@@ -82,9 +83,9 @@ def train(model, dataloader, device):
         avg_test_loss, test_acc = evaluate_loss_and_acc(model, testload, criterion, device)
         test_losses.append(avg_test_loss)
 
-        print(f"Epoch {epoch+1}/{epochs}, Train Loss: {avg_train_loss:.4f}, Test Loss: {avg_test_loss:.4f}, Test Acc: {test_acc:.4f}")
+        print(f"Epoch {epoch+1}/{epochs} complemted. Train Loss: {avg_train_loss:.4f} | Test Loss: {avg_test_loss:.4f} | Test Acc: {test_acc:.4f}")
 
-    with open(os.path.join(out_dir, 'torch_cnn_loss_history.json'), 'w') as f:
+    with open(os.path.join(out_dir, 'epoch_5_torch_cnn_loss_history.json'), 'w') as f:
         json.dump({'train_losses': train_losses, 'test_losses': test_losses}, f, indent=2)
     
 if __name__ == "__main__":
@@ -93,4 +94,4 @@ if __name__ == "__main__":
     model = ThreeLayerCNN().to(device)
     
     train(model, dataloader='dataset', device=device)
-    save_model(model, save_path='checkpoints/torch_cnn.pt')
+    save_model(model, save_path='checkpoints/epoch_5_torch_cnn.pt')

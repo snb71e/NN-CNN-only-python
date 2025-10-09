@@ -6,11 +6,11 @@ from src.dataloader import Dataloader
 from src.utils import load_model, confusion_matrix, confusion_matrix_prob
 
 CKPT_DIR = "checkpoints" 
-OUT_DIR  = "epoch_5_outputs_NN"
+OUT_DIR  = "epoch_500_outputs_NN"
 os.makedirs(OUT_DIR, exist_ok=True)
 
-model = load_model('./checkpoints/epoch_5_nn.npz')
-hist_path = os.path.join(CKPT_DIR, 'epoch_5_nn_loss_history.json')
+model = load_model('./checkpoints/epoch_500_nn.npz')
+hist_path = os.path.join(CKPT_DIR, 'epoch_500_nn_loss_history.json')
 
 
 batch_size = 128
@@ -62,9 +62,13 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUT_DIR, 'loss_curves.png'), dpi=150)
 plt.close()
 
-# Confusion matrix on test set
-_, test_acc, y_true, y_pred, probs_all = evaluate_full(model, test_loader)
-print(f"Test Accuracy: {test_acc:.4f}")
+train_loss, train_acc, _, _, _ = evaluate_full(model, train_loader)
+test_loss, test_acc, y_true, y_pred, probs_all = evaluate_full(model, test_loader)
+print(f"Final Results:")
+print(f"  Train Loss: {train_loss:.4f}")
+print(f"  Train Acc: {train_acc:.4f}")
+print(f"  Test  Loss: {test_loss:.4f}")
+print(f"  Test  Acc : {test_acc:.4f}")
 cm_counts = confusion_matrix(y_true, y_pred, num_classes=10)
 cm_prob   = confusion_matrix_prob(cm_counts)
 

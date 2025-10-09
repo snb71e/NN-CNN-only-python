@@ -1,11 +1,3 @@
-# torch_test_NN.py
-"""
-Draw all the output of NN (PyTorch checkpoint)
-  1) Training/Test loss curves
-  2) 10x10 confusion matrix (probability)
-  3) Top-3 scored images with probability per class
-"""
-
 import os
 import json
 import numpy as np
@@ -17,27 +9,23 @@ from src.dataloader import Dataloader
 from src.utils import confusion_matrix, confusion_matrix_prob
 from model.torch_ThreeLayerCNN import ThreeLayerCNN 
 
-# ---------------- Paths ----------------
 CKPT_DIR = "checkpoints"
-OUT_DIR  = "outputs_torch_CNN"
+OUT_DIR  = "epoch_500_outputs_torch_CNN"
 os.makedirs(OUT_DIR, exist_ok=True)
 
-CKPT_PATH = os.path.join(CKPT_DIR, "torch_cnn.pt")
-HIST_PATH = os.path.join(CKPT_DIR, "torch_cnn_loss_history.json")
+CKPT_PATH = os.path.join(CKPT_DIR, "epoch_500_torch_cnn.pt")
+HIST_PATH = os.path.join(CKPT_DIR, "epoch_500_torch_cnn_loss_history.json")
 
-# ---------------- Data loaders ----------------
 batch_size   = 128
 train_loader = Dataloader("dataset", is_train=True,  shuffle=False, batch_size=batch_size)
 test_loader  = Dataloader("dataset", is_train=False, shuffle=False, batch_size=batch_size)
 
-# ---------------- Utilities ----------------
 def np_batch_to_tensors(images, labels, device):
-    """Convert numpy (NHW or NCHW) + labels (one-hot or ids) to torch tensors on device."""
     if isinstance(images, np.ndarray):
         x = torch.from_numpy(images).float()
     else:
         x = images.float()
-    # if grayscale NHW, add channel dim -> NCHW
+    # NCHW
     if x.ndim == 3:
         x = x.unsqueeze(1)
     if isinstance(labels, np.ndarray):
@@ -49,7 +37,6 @@ def np_batch_to_tensors(images, labels, device):
 
 @torch.no_grad()
 def evaluate_full(model, dataload, device):
-    """Return avg_loss, acc, y_true(np), y_pred(np), probs_all(np)."""
     model.eval()
     total = 0
     total_loss = 0.0
@@ -82,13 +69,12 @@ def evaluate_full(model, dataload, device):
     acc      = float((y_true == y_pred).mean())
     return avg_loss, acc, y_true, y_pred, probs_all
 
-# ---------------- Load model ----------------
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = ThreeLayerCNN().to(device)
 state = torch.load(CKPT_PATH, map_location=device)
 model.load_state_dict(state)
 
-# ---------------- 1) Loss curves (train/test) ----------------
+# Loss curves 
 if not os.path.exists(HIST_PATH):
     raise FileNotFoundError(f"Missing {HIST_PATH}. Re-run torch training to save loss history.")
 with open(HIST_PATH, "r") as f:
@@ -101,20 +87,24 @@ plt.plot(range(1, len(train_losses)+1), train_losses, label="train")
 plt.plot(range(1, len(test_losses)+1),  test_losses,  label="test")
 plt.xlabel("Epoch")
 plt.ylabel("Cross-Entropy Loss")
-plt.title("Torch NN Loss (Train/Test)")
+plt.title("Torch CNN Loss (Train/Test)")
 plt.legend()
 plt.tight_layout()
 plt.savefig(os.path.join(OUT_DIR, "loss_curves.png"), dpi=150)
 plt.close()
 
-# ---------------- 2) Confusion matrix on test set ----------------
-_, test_acc, y_true, y_pred, probs_all = evaluate_full(model, test_loader, device)
-print(f"Test Accuracy: {test_acc:.4f}")
+# Confusion matrix 
+train_loss, train_acc, _, _, _ = evaluate_full(model, train_loader,device)
+test_loss, test_acc, y_true, y_pred, probs_all = evaluate_full(model, test_loader, device)
+print(f"Final Results:")
+print(f"  Train Loss: {train_loss:.4f}")
+print(f"  Train Acc: {train_acc:.4f}")
+print(f"  Test  Loss: {test_loss:.4f}")
+print(f"  Test  Acc : {test_acc:.4f}")
+
+
 cm_counts = confusion_matrix(y_true, y_pred, num_classes=10)
 cm_prob   = confusion_matrix_prob(cm_counts)
-
-# np.savetxt(os.path.join(OUT_DIR, "confusion_matrix_counts.csv"), cm_counts, fmt="%d", delimiter=",")
-# np.savetxt(os.path.join(OUT_DIR, "confusion_matrix_prob.csv"),   cm_prob,   fmt="%.4f", delimiter=",")
 
 plt.figure(figsize=(6,5))
 plt.imshow(cm_prob, vmin=0.0, vmax=1.0, interpolation="nearest", cmap="Blues")
@@ -130,8 +120,7 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUT_DIR, "confusion_matrix_prob.png"), dpi=150)
 plt.close()
 
-# ---------------- 3) Top-3 images with probabilities (per class) ----------------
-# 수집(원본 이미지는 numpy로 묶어둠)
+# Top-3 images with probabilities 
 imgs_list, labels_list = [], []
 for images, labels in test_loader:
     imgs_list.append(images)

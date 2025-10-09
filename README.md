@@ -1,4 +1,4 @@
-# NN and CNN for MNIST Classification from Scratch
+# CSE303 NN and CNN for MNIST Classification from Scratch (Fall 2025)
 This repository contains the implementation of a 3-layer Neural Network (NN) and Convolutional Neural Network (CNN) for classification, built entirely from scratch using **only Python and standard libraries like Numpy**. 
 Also, There are Pytorch implementation.
 

@@ -43,7 +43,7 @@ def evaluate_full(model, dataload):
     acc      = float((y_true == y_pred).mean())
     return avg_loss, acc, y_true, y_pred, probs_all
 
-# ---------------- 1) Loss curves (train/test) ----------------
+# Loss curves (train/test)
 if not os.path.exists(hist_path):
     raise FileNotFoundError(f"Missing {hist_path}. Re-run training so it saves loss history.")
 with open(hist_path, 'r') as f:
@@ -62,14 +62,11 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUT_DIR, 'loss_curves.png'), dpi=150)
 plt.close()
 
-# ---------------- 2) Confusion matrix on test set ----------------
+# Confusion matrix on test set
 _, test_acc, y_true, y_pred, probs_all = evaluate_full(model, test_loader)
 print(f"Test Accuracy: {test_acc:.4f}")
 cm_counts = confusion_matrix(y_true, y_pred, num_classes=10)
 cm_prob   = confusion_matrix_prob(cm_counts)
-
-# np.savetxt(os.path.join(OUT_DIR, 'confusion_matrix_counts.csv'), cm_counts, fmt='%d', delimiter=',')
-# np.savetxt(os.path.join(OUT_DIR, 'confusion_matrix_prob.csv'),   cm_prob,   fmt='%.4f', delimiter=',')
 
 plt.figure(figsize=(6,5))
 plt.imshow(cm_prob, vmin=0.0, vmax=1.0, interpolation='nearest', cmap='Blues')
@@ -85,7 +82,7 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUT_DIR, 'confusion_matrix_prob.png'), dpi=150)
 plt.close()
 
-# ---------------- 3) Top-3 images with probabilities (per class) ----------------
+# Top-3 images with probabilities
 import numpy as np
 
 imgs_list, labels_list = [], []
@@ -106,7 +103,6 @@ for c in range(10):
     if len(idx_c) == 0:
         continue
     class_probs = probs_all[idx_c, c]
-    # rest of the code
 
 # summary block
 summary_lines = []
@@ -116,13 +112,11 @@ for c in range(10):
         summary_lines.append(f"{c}: (no samples)")
         continue
     class_probs = probs_all[idx_c, c]
-    # rest of the code
     topk_idx = np.argsort(-class_probs)[:3]
     probs_pct = [f"{p*100:.1f}%" for p in class_probs[topk_idx]]
     summary_lines.append(f"{c}: "+", ".join(probs_pct))
     chosen   = idx_c[topk_idx]
     chosen_probs = class_probs[topk_idx]
-    # Make one figure per class with 3 images and a text of probabilities like the example
     fig = plt.figure(figsize=(9, 3))
     for i_img, (idx_img, p) in enumerate(zip(chosen, chosen_probs), start=1):
         ax = fig.add_subplot(1, 3, i_img)

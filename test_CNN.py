@@ -1,9 +1,3 @@
-"""
-Draw all the output of CNN, then write them in a report
-    1. Show training Loss graph (Train & test set)
-    2. Show 10x10 confusion matrix (the probability matrix of classification)
-    3. Show top 3 scored images with probability (for each class)
-"""
 import os
 import json
 import numpy as np
@@ -11,12 +5,12 @@ import matplotlib.pyplot as plt
 from src.dataloader import Dataloader
 from src.utils import load_model_cnn, confusion_matrix, confusion_matrix_prob
 
-
 CKPT_DIR = "checkpoints" 
-OUT_DIR  = "outputs_CNN" 
+OUT_DIR  = "epoch_500_outputs_CNN" 
 os.makedirs(OUT_DIR, exist_ok=True)
 
-model = load_model_cnn(os.path.join(CKPT_DIR, 'cnn.npz'))
+model = load_model_cnn(os.path.join(CKPT_DIR, 'epoch_500_cnn.npz'))
+hist_path = os.path.join(CKPT_DIR, 'epoch_500_cnn_loss_history.json')
 
 batch_size = 128
 train_loader = Dataloader("dataset", is_train=True,  shuffle=False, batch_size=batch_size)
@@ -49,7 +43,6 @@ def evaluate_full(model, dataload):
     return avg_loss, acc, y_true, y_pred, probs_all
 
 # Loss Curve
-hist_path = os.path.join(CKPT_DIR, 'cnn_loss_history.json')
 if not os.path.exists(hist_path):
     raise FileNotFoundError(f"Missing {hist_path}. Re-run training so it saves loss history.")
 with open(hist_path, 'r') as f:
